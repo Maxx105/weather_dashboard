@@ -11,16 +11,59 @@
 
     <body>
         <h1 style="background-color: darkslategrey; color: white; text-align: center; padding-bottom: 10px;">Weather Dashboard</h1>
-        <div class="row">
-            <div class="col-md-3" style="background-color:rgb(235, 230, 230); margin-left:20px;">
-                <h3>Search for a City:</h3>
-                <input placeholder="city here" style="float: left;"></input>
-                <button>SEARCH</button>
-            </div>
-            <div class="col-md-8" style="background-color:rgb(235, 230, 230); margin-left: 5px;">
-                
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3" style="background-color:rgb(235, 230, 230); margin-left:20px; padding-bottom:20px;">
+                    <h3>Search for a City:</h3>
+                    <input placeholder="City Here" id="city" style="float: left; width: 250px;"></input>
+                    <button id="search">SEARCH</button>
+                    <ul class="list-group" style="clear: both; margin-top: 10px;" id="searchHistory"></ul>
+                </div>
+                <div class="col-md-8" style="background-color:rgb(247, 242, 242); margin-left: 50px;">
+                    
+                </div>
             </div>
         </div>
+
+        <script>
+            let search = $('#search');
+            let cityInput = $('#city');
+            let searchHistoryDiv = $('#searchHistory');
+            let searchArray = [];
+            
+            let searchStorage = JSON.parse(localStorage.getItem('search'));
+            console.log(searchStorage);
+            appendStorage();
+
+            function appendStorage(){
+                if (searchStorage === null){
+                    searchArray[0] = '';
+                } else {
+                for (let i = 1; i < searchStorage.length; i++){
+                let storedHistoryItem = $('<li>');
+                storedHistoryItem.text(searchStorage[i]);
+                storedHistoryItem.attr('class', 'list-group-item');
+                searchHistoryDiv.append(storedHistoryItem);
+                searchArray = searchStorage;
+                }
+            }
+            }
+            
+
+            search.on('click', function(event){
+                // console.log(cityInput.val());
+                if (cityInput.val() !== "") {
+                let searchHistoryItem = $('<li>');
+                searchHistoryItem.text(cityInput.val());
+                searchHistoryItem.attr('class', 'list-group-item');
+                searchHistoryDiv.append(searchHistoryItem);
+                searchArray.push(cityInput.val());
+                localStorage.setItem('search', JSON.stringify(searchArray));
+                cityInput.val('');
+                } 
+            });
+            
+        </script>
     </body>
 
 </html>
