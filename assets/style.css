@@ -1,0 +1,10 @@
+li:hover,
+button:hover {
+    background-color: lightgrey;
+}
+
+li:active,
+button:active {
+    background-color: grey;
+}
+
