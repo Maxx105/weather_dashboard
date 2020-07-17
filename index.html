@@ -14,14 +14,14 @@
         <h1 style="background-color: darkslategrey; color: white; text-align: center; padding-bottom: 10px;">Weather Dashboard</h1>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-3" style="background-color:rgb(235, 230, 230); margin-left:20px; padding-bottom:20px;">
+                <div class="col-md-3" style="background-color:rgb(235, 230, 230); margin-left:20px; padding-bottom:20px; border-color: black; border-style: solid; border-width: 2px; border-radius: 25px;">
                     <h3>Search for a City:</h3>
                     <input placeholder="City Here" id="city" style="float: left; width: 250px;"></input>
                     <button id="search">SEARCH</button>
                     <ul class="list-group" style="clear: both; margin-top: 10px;" id="searchHistory"></ul>
                     <button id="clear" style="margin-top: 10px;">Clear Search History</button>
                 </div>
-                <div class="col-md-8" style="background-color:lightgrey; margin-left: 50px;">
+                <div class="col-md-8" style="background-color:lightgrey; border-color: black; border-style: solid; border-width: 2px; border-radius: 25px;">
                     <div class="row" id="currentDiv" style='margin-left: 10px;'>
                         <h1 id="cityName" style="float:left;"></h1>
                         <img id="icon">
@@ -46,6 +46,8 @@
             let searchArray = [];
             let searchCity = cityInput.val();;
             let APIKey = "2cb7e21574807b1886d517ed74e9732f";
+            let latitude = "";
+            let longitude = "";
            
             
             let searchStorage = JSON.parse(localStorage.getItem('search'));
@@ -69,6 +71,7 @@
             search.on('click', function(event){
                 searchCity = cityInput.val();
                 getCurrentWeatherData();
+                // getUvIndex();
                 getfutureWeatherData();
                 createSearchHistory();
             });
@@ -83,6 +86,7 @@
                 searchCity = $(this).text();
                 //console.log(searchCity);
                 getCurrentWeatherData();
+                // getUvIndex();
                 getfutureWeatherData();
             });
 
@@ -101,10 +105,10 @@
 
             function getCurrentWeatherData(){
 
-                let WeatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&appid=" + APIKey;
+                let currentWeatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&appid=" + APIKey;
 
                 $.ajax({
-                    url: WeatherURL,
+                    url: currentWeatherURL,
                     method: "GET"
                 }).then(function(response) {
                 //console.log(response);
@@ -112,7 +116,14 @@
                 let tempF = ((tempK - 273.15)*9/5) + 32;
                 let humidity = response.main.humidity;
                 let windspeed = response.wind.speed;
-                let uvIndex = response
+                let uvIndex = response;
+                let lat = response.coord.lat;
+                let lon = response.coord.lon;
+                latitude = lat;
+                longitude = lon;
+                console.log("latitude", latitude);
+                console.log("longitude", longitude);
+
 
                 $('#cityName').text(`${response.name} (${moment().format('l')})`);
                 $('#icon').attr('src', 'http://openweathermap.org/img/wn/' + response.weather[0].icon + '@2x.png');
@@ -127,16 +138,28 @@
 
             function getfutureWeatherData(){
 
-                let WeatherURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + searchCity + "&appid=" + APIKey;
+                let futureWeatherURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + searchCity + "&appid=" + APIKey;
 
                 $.ajax({
-                    url: WeatherURL,
+                    url: futureWeatherURL,
                     method: "GET"
                 }).then(function(response) {
                 console.log(response.list[0].main.temp);
                 //console.log()
                 });
             }
+
+            // function getUvIndex(){
+
+            //     let oneCallWeatherURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&exclude=minutely,hourly,daily&appid=" + APIKey;
+
+            //     $.ajax({
+            //         url: oneCallWeatherURL,
+            //         method: "GET"
+            //     }).then(function(response) {
+            //     console.log(response);
+            //     });
+            // }
 
             
             
