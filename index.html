@@ -71,7 +71,6 @@
             search.on('click', function(event){
                 searchCity = cityInput.val();
                 getCurrentWeatherData();
-                // getUvIndex();
                 getfutureWeatherData();
                 createSearchHistory();
             });
@@ -86,7 +85,6 @@
                 searchCity = $(this).text();
                 //console.log(searchCity);
                 getCurrentWeatherData();
-                // getUvIndex();
                 getfutureWeatherData();
             });
 
@@ -111,12 +109,11 @@
                     url: currentWeatherURL,
                     method: "GET"
                 }).then(function(response) {
-                //console.log(response);
+                console.log(response);
                 let tempK = parseFloat(response.main.temp);
                 let tempF = ((tempK - 273.15)*9/5) + 32;
                 let humidity = response.main.humidity;
                 let windspeed = response.wind.speed;
-                let uvIndex = response;
                 let lat = response.coord.lat;
                 let lon = response.coord.lon;
                 latitude = lat;
@@ -124,13 +121,14 @@
                 console.log("latitude", latitude);
                 console.log("longitude", longitude);
 
-
                 $('#cityName').text(`${response.name} (${moment().format('l')})`);
                 $('#icon').attr('src', 'http://openweathermap.org/img/wn/' + response.weather[0].icon + '@2x.png');
                 $('#icon').attr('style', 'height: 70px; width: 70px; margin-top: -8px;');
                 $('#temperature').text(`Temperature: ${tempF.toFixed(1)} °F`);
                 $('#humidity').text(`Humidity: ${humidity}%`);
                 $('#windspeed').text(`Wind Speed: ${windspeed} MPH`);
+                getUvIndex();
+                // 
                 
                 //console.log(response.name);
                 });
@@ -144,25 +142,44 @@
                     url: futureWeatherURL,
                     method: "GET"
                 }).then(function(response) {
-                console.log(response.list[0].main.temp);
+                //console.log(response.list[0].main.temp);
                 //console.log()
                 });
             }
 
-            // function getUvIndex(){
+            function getUvIndex(){
 
-            //     let oneCallWeatherURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&exclude=minutely,hourly,daily&appid=" + APIKey;
+                let oneCallWeatherURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&exclude=minutely,hourly,daily&appid=" + APIKey;
 
-            //     $.ajax({
-            //         url: oneCallWeatherURL,
-            //         method: "GET"
-            //     }).then(function(response) {
-            //     console.log(response);
-            //     });
-            // }
+                $.ajax({
+                    url: oneCallWeatherURL,
+                    method: "GET"
+                }).then(function(response) {
+                    console.log(response);
+                    uvIndex = response.current.uvi;
+                    uvIndexVal = $('<span>');
+                    if (uvIndex <= 3){
+                        uvIndexVal.attr('class', 'badge badge-success');
+                    } else if (uvIndex > 3 && uvIndex <= 6){
+                        uvIndexVal.attr('class', 'badge badge-warning');
+                    } else if (uvIndex > 6 && uvIndex <= 7){
+                        uvIndexVal.attr('class', 'badge badge-warning');
+                        uvIndexVal.attr('style', 'background-color: orange;');
+                    } else if (uvIndex > 7 && uvIndex <= 10){
+                        uvIndexVal.attr('class', 'badge badge-danger');
+                    } else if (uvIndex >= 10){
+                        uvIndexVal.attr('class', 'badge badge-danger');
+                        uvIndexVal.attr('style', 'background-color: purple;');
+                    }
+                    $('#uvIndex').text(`UV Index: `);
+                    uvIndexVal.text(uvIndex);
+                    $('#uvIndex').append(uvIndexVal);
+                    
+                    
+                });
+            }
 
-            
-            
+        
         </script>
     </body>
 
