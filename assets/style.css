@@ -8,3 +8,56 @@ button:active {
     background-color: grey;
 }
 
+#weatherDashboard {
+    background-color: darkslategrey; 
+    color: white; 
+    text-align: center; 
+    padding-bottom: 10px;
+}
+
+#citySearchDiv {
+    background-color:rgb(235, 230, 230); 
+    margin-left:10px; 
+    margin-right:10px; 
+    padding-bottom:20px; 
+    border-color: black; 
+    border-style: solid; 
+    border-width: 2px; 
+    border-radius: 25px;
+}
+
+#city {
+    float: left; 
+    width: 250px;
+}
+
+#searchHistory {
+    clear: both; 
+    margin-top: 10px;
+}
+
+#clear {
+    margin-top: 10px;
+}
+
+#forecastDiv {
+    background-color:lightgrey; 
+    margin-left: 10px;  
+    margin-right:10px; 
+    border-color: black; 
+    border-style: solid; 
+    border-width: 2px; 
+    border-radius: 25px;
+}
+
+#currentDiv {
+    margin-left: 10px;
+}
+
+#cityName {
+    float:left;
+}
+
+#weather {
+    margin-left: 15px;
+}

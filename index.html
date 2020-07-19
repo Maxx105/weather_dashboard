@@ -11,22 +11,22 @@
     </head>
 
     <body>
-        <h1 style="background-color: darkslategrey; color: white; text-align: center; padding-bottom: 10px;">Weather Dashboard</h1>
+        <h1 id="weatherDashboard">Weather Dashboard</h1>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-3" style="background-color:rgb(235, 230, 230); margin-left:10px; margin-right:10px; padding-bottom:20px; border-color: black; border-style: solid; border-width: 2px; border-radius: 25px;">
+                <div class="col-md-3" id="citySearchDiv">
                     <h3>Search for a City:</h3>
-                    <input placeholder="City Here" id="city" style="float: left; width: 250px;"></input>
+                    <input placeholder="City Here" id="city"></input>
                     <button id="search">SEARCH</button>
-                    <ul class="list-group" style="clear: both; margin-top: 10px;" id="searchHistory"></ul>
-                    <button id="clear" style="margin-top: 10px;">Clear Search History</button>
+                    <ul class="list-group" id="searchHistory"></ul>
+                    <button id="clear">Clear Search History</button>
                 </div>
-                <div class="col-md-8" style="background-color:lightgrey; margin-left: 10px;  margin-right:10px; border-color: black; border-style: solid; border-width: 2px; border-radius: 25px;">
-                    <div class="row" id="currentDiv" style='margin-left: 10px;'>
-                        <h1 id="cityName" style="float:left;"></h1>
+                <div class="col-md-8" id="forecastDiv">
+                    <div class="row" id="currentDiv">
+                        <h1 id="cityName"></h1>
                         <img id="icon">
                     </div>
-                    <div style='margin-left: 15px;' id="weather">
+                    <div id="weather">
                         <p id="temperature"></p>
                         <p id="humidity"></p>
                         <p id="windspeed"></p>
@@ -75,7 +75,7 @@
             
             search.on('click', function(event){
                 searchCity = cityInput.val();
-                getCurrentWeatherData();
+                getWeatherData();
                 createSearchHistory();
             });
 
@@ -88,8 +88,7 @@
             $('.list-group-item').on('click', function(event){
                 $('#hr').remove();
                 searchCity = $(this).text();
-                getCurrentWeatherData();
-                //console.log(searchCity);
+                getWeatherData();
             });
 
 
@@ -105,7 +104,7 @@
                 } 
             }
 
-            function getCurrentWeatherData(){
+            function getWeatherData(){
 
                 let currentWeatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&appid=" + APIKey;
 
@@ -121,8 +120,6 @@
                 let lon = response.coord.lon;
                 latitude = lat;
                 longitude = lon;
-                // console.log("latitude", latitude);
-                // console.log("longitude", longitude);
 
                 $('#cityName').text(`${response.name} (${moment().format('l')})`);
                 $('#icon').attr('src', 'https://openweathermap.org/img/wn/' + response.weather[0].icon + '@2x.png');
@@ -144,8 +141,6 @@
                     url: oneCallWeatherURL,
                     method: "GET"
                 }).then(function(response) {
-
-                    console.log(response);
 
                     uvIndex = response.current.uvi;
                     uvIndexVal = $('<span>');
@@ -205,11 +200,8 @@
                         forecastCard.append(forecastTemp);
                         forecastCard.append(forecastHumidity);
                         
-                        $('#forecastCards').append(forecastCardDiv);
-
-                            
+                        $('#forecastCards').append(forecastCardDiv);   
                     }
-                    
                 });
             }
 
