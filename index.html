@@ -26,11 +26,45 @@
                         <h1 id="cityName" style="float:left;"></h1>
                         <img id="icon">
                     </div>
-                    <div style='margin-left: 15px;'>
+                    <div style='margin-left: 15px;' id="weather">
                         <p id="temperature"></p>
                         <p id="humidity"></p>
                         <p id="windspeed"></p>
                         <p id="uvIndex"></p>
+                        <hr>
+                        <div id="forecastCards"></div>
+
+                        <!-- <div class="card text-white bg-primary mb-3" style="max-width: 18rem; float: left; width: 200px;" id="card1">
+                            <div class="card-body">
+                              <h5 class="card-title"></h5>
+                              <p class="card-text"></p>
+                            </div>
+                          </div>
+                          <div class="card text-white bg-primary mb-3" style="max-width: 18rem; float: left; width: 200px;" id="card2">
+                            <div class="card-body">
+                              <h5 class="card-title"></h5>
+                              <p class="card-text"></p>
+                            </div>
+                          </div>
+                          <div class="card text-white bg-primary mb-3" style="max-width: 18rem; float: left; width: 200px;" id="card3">
+                            <div class="card-body">
+                              <h5 class="card-title"></h5>
+                              <p class="card-text"></p>
+                            </div>
+                          </div>
+                          <div class="card text-white bg-primary mb-3" style="max-width: 18rem; float: left; width: 200px;" id="card4">
+                            <div class="card-body">
+                              <h5 class="card-title"></h5>
+                              <p class="card-text"></p>
+                            </div>
+                          </div>
+                          <div class="card text-white bg-primary mb-3" style="max-width: 18rem; float: left; width: 200px;" id="card5">
+                            <div class="card-body">
+                              <h5 class="card-title"></h5>
+                              <p class="card-text"></p>
+                            </div>
+                          </div> -->
+
                     </div>
                 </div>
             </div>
@@ -71,7 +105,6 @@
             search.on('click', function(event){
                 searchCity = cityInput.val();
                 getCurrentWeatherData();
-                getfutureWeatherData();
                 createSearchHistory();
             });
 
@@ -82,10 +115,10 @@
             });
 
             $('.list-group-item').on('click', function(event){
+                $('#hr').remove();
                 searchCity = $(this).text();
-                //console.log(searchCity);
                 getCurrentWeatherData();
-                getfutureWeatherData();
+                //console.log(searchCity);
             });
 
 
@@ -109,7 +142,6 @@
                     url: currentWeatherURL,
                     method: "GET"
                 }).then(function(response) {
-                console.log(response);
                 let tempK = parseFloat(response.main.temp);
                 let tempF = ((tempK - 273.15)*9/5) + 32;
                 let humidity = response.main.humidity;
@@ -118,44 +150,32 @@
                 let lon = response.coord.lon;
                 latitude = lat;
                 longitude = lon;
-                console.log("latitude", latitude);
-                console.log("longitude", longitude);
+                // console.log("latitude", latitude);
+                // console.log("longitude", longitude);
 
                 $('#cityName').text(`${response.name} (${moment().format('l')})`);
-                $('#icon').attr('src', 'http://openweathermap.org/img/wn/' + response.weather[0].icon + '@2x.png');
+                $('#icon').attr('src', 'https://openweathermap.org/img/wn/' + response.weather[0].icon + '@2x.png');
                 $('#icon').attr('style', 'height: 70px; width: 70px; margin-top: -8px;');
                 $('#temperature').text(`Temperature: ${tempF.toFixed(1)} °F`);
                 $('#humidity').text(`Humidity: ${humidity}%`);
                 $('#windspeed').text(`Wind Speed: ${windspeed} MPH`);
-                getUvIndex();
-                // 
-                
-                //console.log(response.name);
+
+                getUvAndFutureWeather();
+            
                 });
             }
 
-            function getfutureWeatherData(){
+            function getUvAndFutureWeather(){
 
-                let futureWeatherURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + searchCity + "&appid=" + APIKey;
-
-                $.ajax({
-                    url: futureWeatherURL,
-                    method: "GET"
-                }).then(function(response) {
-                //console.log(response.list[0].main.temp);
-                //console.log()
-                });
-            }
-
-            function getUvIndex(){
-
-                let oneCallWeatherURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&exclude=minutely,hourly,daily&appid=" + APIKey;
+                let oneCallWeatherURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + latitude + "&lon=" + longitude + "&exclude=minutely,hourly&appid=" + APIKey;
 
                 $.ajax({
                     url: oneCallWeatherURL,
                     method: "GET"
                 }).then(function(response) {
+
                     console.log(response);
+
                     uvIndex = response.current.uvi;
                     uvIndexVal = $('<span>');
                     if (uvIndex <= 3){
@@ -175,9 +195,49 @@
                     uvIndexVal.text(uvIndex);
                     $('#uvIndex').append(uvIndexVal);
                     
+                    for(let i = 0; i < response.daily.length; i++){
+                    var timestamp = moment.unix(response.daily[i].dt);
+                    console.log(  );
+                    }
+
+                    $('#forecastCards').empty();
+                    for (let i = 1; i < 6; i++){
+                        let timestamp = moment.unix(response.daily[i].dt).format("MM/DD/YYYY");
+                        
+                        let forecastCardDiv = $('<div>');
+                        let forecastCard = $('<div>');
+                        let forecastDate = $('<h5>');
+                        let forecastTemp = $('<p>');
+                        let forecastHumidity = $('<p>');
+                        let forecastIcon = $('<img>');
+                        forecastCardDiv.attr('class', 'card text-white bg-primary mb-3');
+                        forecastCardDiv.attr('style', 'max-width: 18rem; float: left; width: 200px; margin-right:10px;');
+                        forecastCardDiv.attr('id', `card${i}`);
+                        
+                        forecastCard.attr('class', 'card-body');
+                        forecastCardDiv.append(forecastCard);
+                        
+                        forecastDate.attr('class', 'card-title');
+
+                        forecastDate.text(timestamp);
+                        forecastIcon.attr('src', 'https://openweathermap.org/img/wn/' + response.daily[i].weather[0].icon + '@2x.png');
+                        let forecastTempK = response.daily[i].temp.max;
+                        let forecastTempF = ((forecastTempK - 273.15)*9/5) + 32;
+                        forecastTemp.text(`Temperature: ${forecastTempF.toFixed(1)} °F`);
+                        forecastHumidity.text(`Humidity: ${response.daily[i].humidity}%`);
+                        
+                        forecastCard.append(forecastDate);
+                        forecastCard.append(forecastIcon);
+                        forecastCard.append(forecastTemp);
+                        forecastCard.append(forecastHumidity);
+                        
+                        $('#forecastCards').append(forecastCardDiv);
+                            
+                    }
                     
                 });
             }
+
 
         
         </script>
