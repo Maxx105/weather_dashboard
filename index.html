@@ -31,39 +31,10 @@
                         <p id="humidity"></p>
                         <p id="windspeed"></p>
                         <p id="uvIndex"></p>
-                        <hr>
-                        <div id="forecastCards"></div>
-
-                        <!-- <div class="card text-white bg-primary mb-3" style="max-width: 18rem; float: left; width: 200px;" id="card1">
-                            <div class="card-body">
-                              <h5 class="card-title"></h5>
-                              <p class="card-text"></p>
-                            </div>
-                          </div>
-                          <div class="card text-white bg-primary mb-3" style="max-width: 18rem; float: left; width: 200px;" id="card2">
-                            <div class="card-body">
-                              <h5 class="card-title"></h5>
-                              <p class="card-text"></p>
-                            </div>
-                          </div>
-                          <div class="card text-white bg-primary mb-3" style="max-width: 18rem; float: left; width: 200px;" id="card3">
-                            <div class="card-body">
-                              <h5 class="card-title"></h5>
-                              <p class="card-text"></p>
-                            </div>
-                          </div>
-                          <div class="card text-white bg-primary mb-3" style="max-width: 18rem; float: left; width: 200px;" id="card4">
-                            <div class="card-body">
-                              <h5 class="card-title"></h5>
-                              <p class="card-text"></p>
-                            </div>
-                          </div>
-                          <div class="card text-white bg-primary mb-3" style="max-width: 18rem; float: left; width: 200px;" id="card5">
-                            <div class="card-body">
-                              <h5 class="card-title"></h5>
-                              <p class="card-text"></p>
-                            </div>
-                          </div> -->
+                        
+                        <div id="forecastCards">
+                            <h2 id=fiveDayForecast></h2>
+                        </div>
 
                     </div>
                 </div>
@@ -195,12 +166,15 @@
                     uvIndexVal.text(uvIndex);
                     $('#uvIndex').append(uvIndexVal);
                     
-                    for(let i = 0; i < response.daily.length; i++){
-                    var timestamp = moment.unix(response.daily[i].dt);
-                    console.log(  );
-                    }
-
                     $('#forecastCards').empty();
+
+                    fiveDayForecast = $('<h2>');
+                    fiveDayForecast.text('5-Day Forecast:');
+                    $('#forecastCards').prepend(fiveDayForecast);
+                    
+                    hrTag = $('<hr>');
+                    $('#forecastCards').prepend(hrTag);
+
                     for (let i = 1; i < 6; i++){
                         let timestamp = moment.unix(response.daily[i].dt).format("MM/DD/YYYY");
                         
@@ -232,6 +206,7 @@
                         forecastCard.append(forecastHumidity);
                         
                         $('#forecastCards').append(forecastCardDiv);
+
                             
                     }
                     
