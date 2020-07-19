@@ -16,8 +16,10 @@
             <div class="row">
                 <div class="col-md-3" id="citySearchDiv">
                     <h3>Search for a City:</h3>
-                    <input placeholder="City Here" id="city"></input>
-                    <button id="search">SEARCH</button>
+                    <form>
+                        <input placeholder="City Here" id="city"></input>
+                        <button id="search">SEARCH</button>
+                    </form>
                     <ul class="list-group" id="searchHistory"></ul>
                     <button id="clear">Clear Search History</button>
                 </div>
@@ -53,13 +55,12 @@
             let APIKey = "2cb7e21574807b1886d517ed74e9732f";
             let latitude = "";
             let longitude = "";
-           
             
             let searchStorage = JSON.parse(localStorage.getItem('search'));
-            //console.log(searchStorage);
             appendStorage();
-
+            
             function appendStorage(){
+                
                 if (searchStorage === null){
                     searchArray = [];
                 } else {
@@ -71,11 +72,28 @@
                     searchArray = searchStorage;
                     }
                 }
+                searchCity = localStorage.getItem('search2');
+                getWeatherData();
+    
+            }
+
+            function createSearchHistory(){
+                if (searchCity !== "") {
+                let searchHistoryItem = $('<li>');
+                searchHistoryItem.text(searchCity);
+                searchHistoryItem.attr('class', 'list-group-item');
+                searchHistoryDiv.append(searchHistoryItem);
+                searchArray.push(cityInput.val());
+                localStorage.setItem('search', JSON.stringify(searchArray));
+                cityInput.val('');
+                } 
             }
             
             search.on('click', function(event){
-                searchCity = cityInput.val();
-                getWeatherData();
+                localStorage.setItem('search2', cityInput.val());
+                // event.preventDefault();
+                // searchCity = cityInput.val();
+                // getWeatherData();
                 createSearchHistory();
             });
 
@@ -89,23 +107,11 @@
                 $('#hr').remove();
                 searchCity = $(this).text();
                 getWeatherData();
+                //console.log(searchCity);
             });
 
-
-            function createSearchHistory(){
-                if (cityInput.val() !== "") {
-                let searchHistoryItem = $('<li>');
-                searchHistoryItem.text(cityInput.val());
-                searchHistoryItem.attr('class', 'list-group-item');
-                searchHistoryDiv.append(searchHistoryItem);
-                searchArray.push(cityInput.val());
-                localStorage.setItem('search', JSON.stringify(searchArray));
-                cityInput.val('');
-                } 
-            }
-
             function getWeatherData(){
-
+                
                 let currentWeatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&appid=" + APIKey;
 
                 $.ajax({
@@ -122,6 +128,7 @@
                 longitude = lon;
 
                 $('#cityName').text(`${response.name} (${moment().format('l')})`);
+                localStorage.setItem('search2', response.name);
                 $('#icon').attr('src', 'https://openweathermap.org/img/wn/' + response.weather[0].icon + '@2x.png');
                 $('#icon').attr('style', 'height: 70px; width: 70px; margin-top: -8px;');
                 $('#temperature').text(`Temperature: ${tempF.toFixed(1)} °F`);
@@ -180,7 +187,7 @@
                         let forecastHumidity = $('<p>');
                         let forecastIcon = $('<img>');
                         forecastCardDiv.attr('class', 'card text-white bg-primary mb-3');
-                        forecastCardDiv.attr('style', 'max-width: 18rem; float: left; width: 200px; margin-right:10px;');
+                        forecastCardDiv.attr('style', 'max-width: 18rem; float: left; width: 180px; height: 235px; margin-right:10px;');
                         forecastCardDiv.attr('id', `card${i}`);
                         
                         forecastCard.attr('class', 'card-body');
@@ -192,7 +199,7 @@
                         forecastIcon.attr('src', 'https://openweathermap.org/img/wn/' + response.daily[i].weather[0].icon + '@2x.png');
                         let forecastTempK = response.daily[i].temp.max;
                         let forecastTempF = ((forecastTempK - 273.15)*9/5) + 32;
-                        forecastTemp.text(`Temperature: ${forecastTempF.toFixed(1)} °F`);
+                        forecastTemp.text(`Temp: ${forecastTempF.toFixed(1)} °F`);
                         forecastHumidity.text(`Humidity: ${response.daily[i].humidity}%`);
                         
                         forecastCard.append(forecastDate);
@@ -204,7 +211,6 @@
                     }
                 });
             }
-
 
         
         </script>
