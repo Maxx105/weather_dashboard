@@ -117,12 +117,12 @@
                     url: currentWeatherURL,
                     method: "GET"
                 }).then(function(response) {
-                console.log(response);
                 let tempK = parseFloat(response.main.temp);
                 // conversion from Kelvin to Farhenheit
                 let tempF = ((tempK - 273.15)*9/5) + 32;
                 let humidity = response.main.humidity;
                 let windspeed = response.wind.speed;
+                let country = response.sys.country;
 
                 // The latitude and longitude are pulled from the first endpoint so they can be used as search parameters in the second enpoint (which gets the UV index and future forecase).
                 let lat = response.coord.lat;
@@ -130,8 +130,13 @@
                 latitude = lat;
                 longitude = lon;
 
-                // The city name is composed of the name from the response as well as a moment.js call that gets the current date
-                $('#cityName').text(`${response.name}, ${response.sys.country} (${moment().format('l')})`);
+                // The city name is composed of the city name and country name from the response as well as a moment.js call that gets the current date.
+                // The "if (country !== undefined)" statement makes it so that a country code is attached to the name only if it exists. In some cases, the response does not have a country which would result in the string "undefined".
+                if (country !== undefined){
+                    $('#cityName').text(`${response.name}, ${country} (${moment().format('l')})`);
+                } else {
+                    $('#cityName').text(`${response.name} (${moment().format('l')})`);
+                }
                 $('#icon').attr('src', 'https://openweathermap.org/img/wn/' + response.weather[0].icon + '@2x.png');
                 $('#icon').attr('style', 'height: 70px; width: 70px; margin-top: -8px;');
                 $('#temperature').text(`Temperature: ${tempF.toFixed(1)} °F`);
@@ -154,7 +159,6 @@
                     url: oneCallWeatherURL,
                     method: "GET"
                 }).then(function(response) {
-                    console.log(response);
                     uvIndex = response.current.uvi;
 
                     // This logic determines what color the UV Index will be.
