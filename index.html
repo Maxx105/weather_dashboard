@@ -53,7 +53,9 @@
             let APIKey = "2cb7e21574807b1886d517ed74e9732f";
             let latitude = "";
             let longitude = "";
-           
+            let searchHistoryArray = [];
+            let itemCounter = 0;
+
             let searchStorage = JSON.parse(localStorage.getItem('search'));
             appendStorage();
 
@@ -65,6 +67,7 @@
                     let storedHistoryItem = $('<li>');
                     storedHistoryItem.text(searchStorage[i]);
                     storedHistoryItem.attr('class', 'list-group-item');
+                    storedHistoryItem.attr('id', searchStorage[i]);
                     searchHistoryDiv.append(storedHistoryItem);
                     searchArray = searchStorage;
                     }
@@ -76,10 +79,12 @@
                 let searchHistoryItem = $('<li>');
                 searchHistoryItem.text(searchCity);
                 searchHistoryItem.attr('class', 'list-group-item');
+                searchHistoryItem.attr('id', searchCity);
                 searchHistoryDiv.append(searchHistoryItem);
-                searchArray.push(cityInput.val());
+                searchArray.push(searchCity);
                 localStorage.setItem('search', JSON.stringify(searchArray));
                 cityInput.val('');
+                
                 } 
             }
             
@@ -92,14 +97,14 @@
             clearSearch.on('click', function(event){
                 window.localStorage.clear();
                 searchHistoryDiv.empty();
+                itemCounter = 0;
                 searchArray = [];
             });
 
-            $('.list-group-item').on('click', function(event){
+            $("#searchHistory").on('click', '.list-group-item', function(event){
                 $('#hr').remove();
-                searchCity = $(this).text();
+                searchCity = event.target.textContent;
                 getWeatherData();
-                console.log(searchCity);
             });
 
             function getWeatherData(){
