@@ -10,7 +10,7 @@ https://maxx105.github.io/weather_dashboard/
 ![deployed application](assets/deployed_app.JPG)
 
 # Technologies:
-For this project, I used HTML and CSS as well as Bootstrap for additional styling. I used JQuery and ajax for retrieving data from the Open Weather API.
+For this project, I used HTML and CSS as well as Bootstrap for additional styling. I used JQuery and ajax for retrieving data from the Open Weather API (https://openweathermap.org/api).
 
 # Purpose:
 This is meant to serve as a small and simple weather application. It allows the user to get the current temperature, humidity, windspeed, and UV index for any city as well as a five day forecast for that city.
